@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Définition des paramètres de surveillance
+LOGFILE=/var/log/syslog
+ALERT_THRESHOLD=5
+
+# Boucle infinie pour la surveillance en temps réel
+while true
+do
+    # Analyse du fichier de journalisation
+    count=$(grep -i 'authentication failure' $LOGFILE | wc -l)
+
+    # Vérification si le seuil d'alerte est dépassé
+    if [ $count -gt $ALERT_THRESHOLD ]
+    then
+        # Envoi d'une alerte par e-mail
+        echo "Attention, $count tentatives de connexion échouées détectées sur $(hostname)" | mail -s "Alerte de sécurité" admin@example.com
+    fi
+
+    # Pause pour laisser le temps au système de générer de nouveaux journaux
+    sleep 10
+done
+
+#Ce script surveille les échecs de connexion en analysant le fichier de journalisation système (/var/log/syslog). Il définit un seuil d'alerte (ALERT_THRESHOLD) à 5 tentatives de connexion échouées, et envoie une alerte par e-mail à l'administrateur système (admin@example.com) en cas de dépassement de ce seuil. La boucle while permet une surveillance en temps réel en analysant le fichier de journalisation toutes les 10 secondes.
+
+#Notez que ce script est un exemple simple de surveillance de la sécurité et peut être adapté en fonction des besoins de chaque système et des événements à surveiller.
