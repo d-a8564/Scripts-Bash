@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Définir la limite d'utilisation de l'espace disque en pourcentage
+LIMIT=90
+
+# Obtenir le pourcentage d'utilisation de l'espace disque
+SPACE=$(df -h / | awk '{ print $5 }' | tail -n 1 | cut -d'%' -f1)
+
+# Vérifier si l'utilisation de l'espace disque a dépassé la limite
+if [ "$SPACE" -gt "$LIMIT" ]; then
+  # Envoyer une notification par e-mail
+  echo "Attention : L'utilisation de l'espace disque a atteint ${SPACE}%." | mail -s "Alerte espace disque" votre@email.com
+fi
+# Script de surveillance de l'utilisation de l'espace disque : Surveillez l'utilisation de l'espace disque de vos serveurs et recevez une notification par e-mail ou sur votre téléphone portable lorsque l'espace disque atteint un seuil critique.
+#Ce script utilise la commande df pour obtenir l'utilisation de l'espace disque de la partition racine (/), puis utilise awk pour extraire le pourcentage d'utilisation, et cut pour supprimer le caractère %. Ensuite, le script compare le pourcentage d'utilisation avec la limite définie et envoie un e-mail d'alerte si nécessaire.
+
+#Notez que pour que ce script fonctionne, vous devez avoir configuré le serveur pour envoyer des e-mails via la commande mail, et vous devez remplacer votre@email.com par votre propre adresse e-mail.
