@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Seuil de charge de la CPU en pourcentage
+CPU_THRESHOLD=80
+
+# Seuil d'utilisation de la mémoire en pourcentage
+MEMORY_THRESHOLD=90
+
+# Adresse e-mail pour les notifications
+EMAIL="monadresse@exemple.com"
+
+# Fonction pour envoyer un e-mail de notification
+send_email() {
+    SUBJECT="Alerte de surveillance de performances"
+    BODY="L'utilisation de la CPU ou de la mémoire a dépassé le seuil défini."
+    echo "$BODY" | mail -s "$SUBJECT" "$EMAIL"
+}
+
+# Boucle infinie de surveillance des performances
+while true; do
+    # Récupérer les informations de charge de la CPU
+    CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}')
+    
+    # Récupérer les informations d'utilisation de la mémoire
+    MEMORY_USAGE=$(free | awk 'NR==2{printf "%.2f%%", $3/$2*100}')
+    
+    # Vérifier si la charge de la CPU dépasse le seuil défini
+    if (( $(echo "$CPU_USAGE >= $CPU_THRESHOLD" | bc -l) )); then
+        send_email
+        echo "Alerte: Utilisation de la CPU à $CPU_USAGE %"
+    fi
+    
+    # Vérifier si l'utilisation de la mémoire dépasse le seuil défini
+    if (( $(echo "$MEMORY_USAGE >= $MEMORY_THRESHOLD" | bc -l) )); then
+        send_email
+        echo "Alerte: Utilisation de la mémoire à $MEMORY_USAGE"
+    fi
+    
+    # Attendre 5 minutes avant de recommencer
+    sleep 300
+done
