@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Fonction pour ajouter un utilisateur
+add_user() {
+    echo "Ajout d'un nouvel utilisateur"
+    read -p "Nom d'utilisateur : " username
+    read -p "Mot de passe : " password
+    read -p "Nom complet : " fullname
+    read -p "Groupe : " group
+    sudo useradd -m -s /bin/bash -c "$fullname" -U -G "$group" "$username"
+    echo "$username:$password" | sudo chpasswd
+    echo "Utilisateur $username ajouté avec succès."
+}
+
+# Fonction pour supprimer un utilisateur
+del_user() {
+    echo "Suppression d'un utilisateur"
+    read -p "Nom d'utilisateur : " username
+    sudo userdel -r "$username"
+    echo "Utilisateur $username supprimé avec succès."
+}
+
+# Fonction pour modifier le mot de passe d'un utilisateur
+chg_pwd() {
+    echo "Modification du mot de passe d'un utilisateur"
+    read -p "Nom d'utilisateur : " username
+    read -p "Nouveau mot de passe : " password
+    echo "$username:$password" | sudo chpasswd
+    echo "Mot de passe pour l'utilisateur $username modifié avec succès."
+}
+
+# Menu principal
+while true
+do
+    echo "Bienvenue dans le gestionnaire d'utilisateurs"
+    echo "1. Ajouter un utilisateur"
+    echo "2. Supprimer un utilisateur"
+    echo "3. Modifier le mot de passe d'un utilisateur"
+    echo "4. Quitter"
+    read -p "Entrez votre choix [1-4] : " choice
+
+    case $choice in
+        1) add_user ;;
+        2) del_user ;;
+        3) chg_pwd ;;
+        4) exit 0 ;;
+        *) echo "Option invalide. Veuillez réessayer." ;;
+    esac
+
+done
