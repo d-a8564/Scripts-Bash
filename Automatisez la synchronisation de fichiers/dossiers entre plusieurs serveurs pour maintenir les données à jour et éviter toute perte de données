@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Define source and destination directories
+src_dir="/path/to/source"
+dest_dir="/path/to/destination"
+
+# Define remote server address (optional)
+remote_server="username@remote.server.com"
+
+# Sync files from source to destination
+rsync -avz $src_dir/ $remote_server:$dest_dir/
+
+#Explications :
+
+#La première étape consiste à définir les répertoires source et destination que vous souhaitez synchroniser en utilisant les variables src_dir et dest_dir.
+#Si vous souhaitez synchroniser avec un serveur distant, vous pouvez définir l'adresse du serveur distant en utilisant la variable remote_server.
+#Enfin, le script utilise la commande rsync pour synchroniser les fichiers et dossiers de la source vers la destination. L'option -a est utilisée pour effectuer une synchronisation en mode archive qui conserve les propriétés des fichiers, tandis que l'option -v affiche une sortie détaillée et l'option -z utilise la compression pour optimiser la vitesse de transfert.
