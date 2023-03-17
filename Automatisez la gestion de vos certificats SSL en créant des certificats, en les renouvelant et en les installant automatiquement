@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Variables
+DOMAIN="example.com"
+EMAIL="admin@example.com"
+LE_DIR="/etc/letsencrypt"
+NGINX_DIR="/etc/nginx"
+
+# Installer Let's Encrypt
+sudo apt-get update
+sudo apt-get install -y certbot
+
+# Obtenir un certificat SSL
+sudo certbot certonly --webroot --agree-tos -m $EMAIL -d $DOMAIN -w /var/www/html
+
+# Renouveler le certificat SSL tous les 3 mois
+sudo echo "0 0 1 */3 * certbot renew --quiet --renew-hook 'systemctl reload nginx'" > /etc/cron.d/renew_ssl_cert
+
+# Installer le certificat SSL
+sudo cp $LE_DIR/live/$DOMAIN/fullchain.pem $NGINX_DIR/ssl/
+sudo cp $LE_DIR/live/$DOMAIN/privkey.pem $NGINX_DIR/ssl/
+sudo chmod 600 $NGINX_DIR/ssl/*
+sudo systemctl reload nginx
+
+#Ce script commence par l'installation de Let's Encrypt, puis obtient un certificat SSL pour un domaine spécifique en utilisant le protocole ACME. Le certificat est ensuite renouvelé tous les 3 mois en utilisant une tâche cron. Enfin, le script installe le certificat SSL en le copiant dans le répertoire de configuration de Nginx et en rechargeant le service Nginx.
+
+#Il est important de noter que ce script doit être adapté en fonction de votre environnement spécifique.
