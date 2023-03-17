@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Configuration des paramètres de la base de données
+DB_USER="user"
+DB_PASS="password"
+DB_NAME="database_name"
+DB_HOST="localhost"
+
+# Configuration des paramètres de la sauvegarde
+BACKUP_DIR="/path/to/backup/directory"
+DATE=$(date +%Y-%m-%d_%H-%M-%S)
+BACKUP_FILE="$BACKUP_DIR/$DB_NAME.$DATE.sql.gz"
+
+# Exécution de la commande de sauvegarde
+mysqldump -u $DB_USER -p$DB_PASS -h $DB_HOST $DB_NAME | gzip > $BACKUP_FILE
+
+# Vérification que la sauvegarde a été créée avec succès
+if [ -f "$BACKUP_FILE" ]; then
+  echo "La sauvegarde de la base de données $DB_NAME a été créée avec succès : $BACKUP_FILE"
+else
+  echo "Erreur : la sauvegarde de la base de données $DB_NAME a échoué"
+fi
