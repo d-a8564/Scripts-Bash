@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Vérification des droits d'administrateur
+if [[ $EUID -ne 0 ]]; then
+   echo "Ce script doit être exécuté en tant qu'administrateur" 
+   exit 1
+fi
+
+# Mise à jour des dépôts
+apt update
+
+# Installation des mises à jour de sécurité
+apt upgrade -y
+
+# Installation des mises à jour de logiciel
+apt-get dist-upgrade -y
+
+# Suppression des paquets obsolètes
+apt autoremove -y
+
+# Redémarrage du système si nécessaire
+if [ -f /var/run/reboot-required ]; then
+   echo "Le système doit être redémarré"
+   reboot
+fi
+
+echo "Mises à jour terminées"
+
+#
