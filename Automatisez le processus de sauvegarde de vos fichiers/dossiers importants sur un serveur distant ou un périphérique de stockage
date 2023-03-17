@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Définition des variables
+backup_dir="/chemin/vers/le/dossier/de/sauvegarde"
+remote_server="utilisateur@serveur distant:/chemin/vers/le/dossier/de/sauvegarde"
+source_dir="/chemin/vers/les/fichiers/a/sauvegarder"
+
+# Vérification de l'existence du dossier de sauvegarde local
+if [ ! -d "$backup_dir" ]; then
+  echo "Le dossier de sauvegarde local n'existe pas. Création en cours..."
+  mkdir -p "$backup_dir"
+fi
+
+# Lancement de la sauvegarde avec rsync
+rsync -avz --delete "$source_dir" "$remote_server"
+
+# Vérification de la réussite de la sauvegarde
+if [ "$?" -eq 0 ]; then
+  echo "Sauvegarde terminée avec succès."
+else
+  echo "La sauvegarde a échoué."
+fi
+
+#Dans ce script, définir les variables backup_dir, remote_server et source_dir selon vos besoins. Le script crée le dossier de sauvegarde local s'il n'existe pas déjà, puis utilise la commande rsync pour copier les fichiers/dossiers du dossier source vers le dossier distant.
+
+#Exécuter ce script manuellement ou l'automatiser en l'ajoutant à une tâche planifiée (crontab) pour qu'il s'exécute à intervalles réguliers.
+
