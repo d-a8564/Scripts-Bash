@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Efface toutes les règles existantes
+iptables -F
+
+# Bloque toutes les connexions entrantes et sortantes par défaut
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+
+# Autorise le trafic loopback
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+# Autorise les connexions établies et les réponses
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Autorise le trafic ICMP (ping)
+iptables -A INPUT -p icmp -j ACCEPT
+iptables -A OUTPUT -p icmp -j ACCEPT
+
+# Autorise le trafic HTTP et HTTPS
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+
+# Autorise le trafic SSH
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
+
+# Autorise le trafic DNS
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+
+# Autorise le trafic NTP
+iptables -A INPUT -p udp --dport 123 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+
+# Refuse tout le reste du trafic entrant et sortant
+iptables -A INPUT -j DROP
+iptables -A OUTPUT -j DROP
+
+# Sauvegarde les règles pour qu'elles soient persistantes
+iptables-save > /etc/iptables/rules.v4
+
+#Ce script configure le pare-feu pour bloquer toutes les connexions entrantes et sortantes par défaut, puis autorise les connexions nécessaires pour le fonctionnement du système, telles que le trafic loopback, les connexions établies, le trafic ICMP, HTTP, HTTPS, SSH, DNS et NTP. Enfin, toutes les autres connexions sont refusées et les règles sont sauvegardées pour qu'elles soient persistantes. Il peut être adapté en fonction des besoins spécifiques de votre environnement.
