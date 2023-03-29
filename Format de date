@@ -1,0 +1,37 @@
+#!/bin/sh
+
+monthnoToName()
+{
+  case $1 in
+    1 ) month="Jan"   ;; 2 ) month="Fev"    ;;
+    3 ) month="Mar"   ;; 4 ) month="Avr"    ;;
+    5 ) month="Mai"   ;; 6 ) month="Jun"    ;;
+    7 ) month="Jul"   ;; 8 ) month="Aou"    ;;
+    9 ) month="Sep"   ;; 10) month="Oct"    ;;
+    11) month="Nov"   ;; 12) month="Dec"    ;;
+    * ) echo "$0: Numero de mois inconnu $1" >$2; exit 1
+  esac
+  return 0
+}
+
+if [ $# -ne 3 ] ; then
+  echo "Synthaxe: $0 jour mois année" >&2
+  ehco "Exemples: 3 aout 1962 ou 3 8 2002" >&2
+  exit 1
+fi
+
+if [ $3 -lt 99 ] ; then
+  echo "$0: tapez une année à quatre chiffres." >&2
+  exit 1
+fi
+
+if [ -z $(echo $2|sed 's/[[:digit:]]//g') ]; then
+  monthnoToName $2
+else
+  month="$(echo $2|cut -c1|tr '[:lower:] ' '[:upper:]')"
+  month="$month$(echo $2|cut -c2-3 | tr '[:upper:]' '[:lower:]')"
+fi
+
+echo$1 $month $3
+
+exit 0
