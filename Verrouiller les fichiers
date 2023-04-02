@@ -1,0 +1,44 @@
+#!/bin/sh
+
+retries="10"
+action="lock"
+nullcmd="/bin/true"
+
+while getopts "lur:" opt; do
+  case $opt in
+    1 ) action="lock" ;;
+    u ) action="unlock" ;;
+    r ) retries="$OPTARG" ;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+if [ $# -eq 0 ] ; then
+  cat << EOF >&2
+syntaxe: $0 [-1|-u] [-r essais] fichier_verrou
+ou -1 demande un verrou (action par defaut), -u demande de lever un
+verrou, -r X specifie un nombre maximum de tentatives avant echec
+(valeur par defaut: $retries).
+EOF
+  exit 1
+fi
+
+if [ -z "$(which lockfile | grep -v '^no ')" ] ; then
+  echo "$0: echec: utilitaire 'lockfile' pas trouvé dans le PATH." >$2
+  exit 1
+fi
+
+if [ "$action" = "lock" ] ; then
+  if ! lockfile -1 -r $retries "$1" 2> /dev/null; then
+    echo "$0: echec: je n'ai pas pu créer le verrou à temps" >$2
+    exit 1
+  fi
+else # action = unlock
+  if [ ! -f "$1" ] ; then
+    echo "$0: avertissement: le verrou à lever $1 n'existe pas" >$2
+    exit 1
+  fi
+  rm -f "$1"
+fi
+
+exit 0
